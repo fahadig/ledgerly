@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ledgerly-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ledgerly
+      POSTGRES_PASSWORD: ledgerly
+      POSTGRES_DB: ledgerly
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ledgerly -d ledgerly"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ledgerly-ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # One-shot: downloads the model the assistant uses, then exits.
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ledgerly-ollama-pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      MODEL: ${OLLAMA_MODEL:-qwen2.5:7b-instruct}
+    entrypoint: ["/bin/sh", "-c", "ollama pull \"$${MODEL}\""]
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledgerly-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ledgerly:ledgerly@db:5432/ledgerly?schema=public
+      AI_PROVIDER: ${AI_PROVIDER:-ollama}
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:7b-instruct}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-4-5}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:
+  ollama-data:

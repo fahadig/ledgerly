@@ -1,0 +1,34 @@
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# next.js
+.next
+out
+dist
+
+# env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# logs & OS
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# drizzle / local db
+drizzle/meta
+*.db
+
+# IDE
+.idea
+.vscode
+*.swp

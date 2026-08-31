@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface text-ink antialiased;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+/* Numbers in tables must line up. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+@layer components {
+  .card {
+    @apply rounded-lg border border-line bg-white;
+  }
+  .card-head {
+    @apply flex items-center justify-between border-b border-line px-5 py-4;
+  }
+  .card-title {
+    @apply text-base font-semibold text-ink;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded px-4 py-2 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-white hover:bg-brand-dark;
+  }
+  .btn-secondary {
+    @apply btn border border-ink-light bg-white text-ink hover:bg-surface;
+  }
+  .btn-ghost {
+    @apply btn text-brand-dark hover:bg-surface;
+  }
+
+  .input {
+    @apply w-full rounded border border-line bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand;
+  }
+  .label {
+    @apply mb-1 block text-xs font-semibold uppercase tracking-wide text-ink-muted;
+  }
+
+  .table {
+    @apply w-full border-collapse text-sm;
+  }
+  .table thead th {
+    @apply border-b border-line px-4 py-2.5 text-left text-xxs font-bold uppercase tracking-wide text-ink-muted;
+  }
+  .table tbody td {
+    @apply border-b border-line/70 px-4 py-2.5 align-top;
+  }
+  .table tbody tr:hover {
+    @apply bg-surface/60;
+  }
+  .num {
+    @apply tabular text-right;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xxs font-bold uppercase tracking-wide;
+  }
+  .badge-open {
+    @apply badge bg-blue-50 text-blue-700;
+  }
+  .badge-paid {
+    @apply badge bg-green-50 text-green-800;
+  }
+  .badge-overdue {
+    @apply badge bg-red-50 text-red-700;
+  }
+  .badge-partial {
+    @apply badge bg-amber-50 text-amber-800;
+  }
+  .badge-neutral {
+    @apply badge bg-gray-100 text-gray-700;
+  }
+  .badge-ai {
+    @apply badge bg-violet-50 text-violet-700;
+  }
+}
